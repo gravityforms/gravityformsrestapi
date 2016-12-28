@@ -98,7 +98,24 @@ class Tests_GF_REST_API_Form_Entries extends GF_UnitTestCase {
 		$this->assertEquals( 'Second Choice', $verify_entry['2.2'] );
 	}
 
+	function test_get_forms_entries_fields() {
+		$form_id = $this->get_form_id();
+		$this->_create_entries();
 
+		$entries = GFAPI::get_entries( $form_id );
+
+		$entry = $entries[0];
+
+		$request = new WP_REST_Request( 'GET', $this->namespace . '/forms/' . $form_id .  '/entries/fields/1;13.6;date_created' );
+
+		$response = $this->server->dispatch( $request );
+		$data = $response->get_data();
+		$verify_fields = $data['entries'][0];
+		$this->assertEquals( $entry[1], $verify_fields[1] );
+		$this->assertEquals( $entry['13.6'], $verify_fields['13.6'] );
+		$this->assertEquals( $entry['date_created'], $verify_fields['date_created'] );
+		$this->assertArrayNotHasKey( 'id', $verify_fields );
+	}
 
 	/* HELPERS */
 	function get_form_id() {

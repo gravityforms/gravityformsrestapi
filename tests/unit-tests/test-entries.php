@@ -170,12 +170,12 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 		$request = new WP_REST_Request( 'POST', $this->namespace . '/entries' );
 		$request->set_body_params( $entry );
 		$response = $this->server->dispatch( $request );
-		$updated_entry = $response->get_data();
+		$added_entry = $response->get_data();
 
-		$this->assertEquals( '2016-07-19 11:00:00', $updated_entry['date_created'] );
-		$this->assertEquals( 'Second Choice', $updated_entry['2.2'] );
+		$this->assertEquals( '2016-07-19 11:00:00', $added_entry['date_created'] );
+		$this->assertEquals( 'Second Choice', $added_entry['2.2'] );
 
-		$entry_id = $updated_entry['id'];
+		$entry_id = $added_entry['id'];
 		$verify_entry = GFAPI::get_entry( $entry_id );
 
 		$this->assertEquals( '2016-07-19 11:00:00', $verify_entry['date_created'] );
@@ -212,7 +212,8 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 
 		$request = new WP_REST_Request( 'DELETE', $this->namespace . '/entries/99999999' );
 		$response = $this->server->dispatch( $request );
-		$result = $response->get_data();
+		$status = $response->get_status();
+		$this->assertEquals( 404, $status );
 
 		$this->_create_entries();
 

@@ -6,7 +6,7 @@
  *
  * Last updated 17 August 2016
  *
- * Class GF_REST_Controller
+ * Class WP_REST_Controller
  */
 
 abstract class WP_REST_Controller {

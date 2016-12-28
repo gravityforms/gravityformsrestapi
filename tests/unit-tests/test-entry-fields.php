@@ -70,13 +70,14 @@ class Tests_GF_REST_API_Entry_Fields extends GF_UnitTestCase {
 
 		$entry_id = $entry['id'];
 
-		$request = new WP_REST_Request( 'GET', $this->namespace . '/entries/' . $entry_id . '/fields/1;13.6' );
+		$request = new WP_REST_Request( 'GET', $this->namespace . '/entries/' . $entry_id . '/fields/1;13.6;date_created' );
 
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$verify_fields = $data[ $entry_id ];
 		$this->assertEquals( $entry[1], $verify_fields[1] );
 		$this->assertEquals( $entry['13.6'], $verify_fields['13.6'] );
+		$this->assertEquals( $entry['date_created'], $verify_fields['date_created'] );
 		$this->assertArrayNotHasKey( 'id', $verify_fields );
 	}
 

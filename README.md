@@ -110,48 +110,6 @@ The response will contain a JSON object which contains the entry details. An exa
 
 #### Optional Arguments
 
-* **form_id** *[int]*
-
-    Gets entries only from specific form IDs.  
-    
-    * **Usage**
-    
-        * Passing a single form ID:
-        
-                https://localhost/wp-json/gf/v2/entries?form_id=1
-
-        * Passing multiple form IDs (semicolon separated, URL encoded):
-          
-                https://localhost/wp-json/gf/v2/entries?form_id=1%3B2%3B3%3B4
-    
-* **entry_id** *[int]*
-
-    Gets specific entries, based on the entry ID.
-
-    * **Usage**
-  
-        * Passing a single entry ID:
-        
-                https://localhost/wp-json/gf/v2/entries?entry_id=1
-    
-        * Passing multiple form IDs (semicolon separated, URL encoded):
-        
-                https://localhost/wp-json/gf/v2/entries?form_id=1%3B2%3B3%3B4
-  
-* **field_ids** *[int|string]*
-
-    Gets only specific field IDs from the entries.
-
-    * **Usage**  
-  
-        * Passing a single field ID:  
-
-                https://localhost/wp-json/gf/v2/entries?field_id=1
-  
-        * Passing multiple field IDs (semicolon separated, URL encoded):
-        
-                https://localhost/wp-json/gf/v2/entries?field_ids=1%3B2%3B3%3B4
-
 * **labels** *[int]*
 
     Enabled the inclusion of field labels in the results.  
@@ -287,13 +245,10 @@ Creates an entry.
 
     https://localhost/wp-json/gf/v2/entries
     
-#### Response *[int]*
+#### Response *[json]*
 
-When creating an entry, the response body will contain the created entry ID.
+When creating an entry, the response body will contain the complete new entry.
 
-**Example Response**
-
-    59
     
 #### Required Arguments
 
@@ -533,20 +488,6 @@ The response will contain a JSON object which contains the entry details. An exa
 
 #### Optional Arguments
 
-* **field_ids** *[int|string]*  
-
-    Gets only specific field IDs from the entries.
-  
-  * **Usage**
-    
-    * Passing a single field ID:  
-    
-            https://localhost/wp-json/gf/v2/entries/5?field_id=1
-    
-    * Passing multiple field IDs (semicolon separated, URL encoded):  
-    
-            https://localhost/wp-json/gf/v2/entries/5?field_ids=1%3B2%3B3%3B4
-
 * **labels** *[int]*
 
     Whether to include the labels.
@@ -774,17 +715,19 @@ Updates an entry based on the specified entry ID.
 
 ### DELETE /entries/[ENTRY_ID]
 
-Deletes an entry based on the specified entry ID.
+Sends the specified entry to the trash. If the entry is already in the trash then repeating this request will not delete 
+the entry permanently but the response code will be 410 (Gone). Use the 'force' parameter to delete the entry permanently.
 
 #### Path
 
     https://localhost/wp-json/gf/v2/entries/1
+    https://localhost/wp-json/gf/v2/entries/1?force=1
     
 #### Response *[string|json]*
 
-* **Success** *[string]*  
+* **Success** *[json]*  
 
-  "Entry deleted successfully"
+  The trashed or deleted entry.
   
 * **Failure** *[json]*  
 
@@ -802,11 +745,12 @@ Deletes an entry based on the specified entry ID.
 
 ### GET /entries/[ENTRY_ID]/fields/[FIELD_ID]
 
-Gets a specific field from an entry.
+Gets a specific field or group of fields from an entry. Multiple field IDs can be specified in a semicolon separated list.
 
 #### Path
 
     https://localhost/wp-json/gf/v2/entries/1/fields/1
+    https://localhost/wp-json/gf/v2/entries/1/fields/1;3;5;date_created;13.6
     
 #### Response *[json]*
 
@@ -871,11 +815,10 @@ Creates a form.
     
 #### Response
 
-* **Success** *[int]*
+* **Success** *[json]*
 
-    The newly created from ID.
+    The newly created form.
     
-        42
 
 * **Failure** *[json]*
 
@@ -1203,34 +1146,6 @@ The response will contain a JSON object which contains the entry details. An exa
 ```
     
 #### Optional Arguments
-    
-* **entry_id** *[int]*  
-    
-    Gets specific entries, based on the entry ID.
-  
-    * **Usage**  
-      
-        * Passing a single entry ID:  
-        
-                https://localhost/wp-json/gf/v2/forms/1/entries?entry_id=1
-    
-        * Passing multiple entry IDs (semicolon separated, URL encoded):  
-        
-                https://localhost/wp-json/gf/v2/forms/1/entries?form_id=1%3B2%3B3%3B4
-    
-* **field_ids** *[int|string]*  
-  
-    Gets only specific field IDs from the entries.
-    
-    * **Usage**  
-    
-        * Passing a single field ID:  
-        
-                https://localhost/wp-json/gf/v2/forms/1/entries?field_id=1
-    
-        * Passing multiple field IDs (semicolon separated, URL encoded):  
-        
-                https://localhost/wp-json/gf/v2/forms/1/entries?field_ids=1%3B2%3B3%3B4
 
 * **labels** *[int]*  
 
@@ -1365,12 +1280,9 @@ Creates an entry based on the specified form ID.
 
     https://localhost/wp-json/gf/v2/forms/1/entries
 
-#### Response *[int]*
+#### Response *[json]*
 
-When creating an entry, the response body will contain the created entry ID.
-
-* **Example Response**
-  59
+When creating an entry, the response body will contain the new entry.
 
 #### Optional Arguments
 
@@ -1532,23 +1444,45 @@ When creating an entry, the response body will contain the created entry ID.
 
 ### GET /forms/[FORM_ID]/entries/fields/[FIELD_ID]
 
-Gets entry values for a specific field.
+Gets a specific field or group of fields from a group of entries. Multiple field IDs can be specified in a semicolon separated list.
 
 #### Path
 
     https://localhost/wp-json/gf/v2/forms/1/entries/fields/1
+    https://localhost/wp-json/gf/v2/forms/1/entries/fields/date_created;1;13.6
+
     
 #### Response *[json]*
 
 **Example Response**  
 
-Request to *https://localhost/wp-json/gf/v2/forms/1/entries/70/fields/22.2*
+Request to *https://localhost/wp-json/gf/v2/forms/1/entries/fields/date_created;1;13.6*
 
 ```json
 {
-  "70": {
-    "22.2": "$200.00"
-  }
+  "total_count": "3",
+  "entries": [
+    {
+      "date_created": "2013-11-29 13:00:00",
+      "1": "Second Choice",
+      "13.6": "Canada"
+    },
+    {
+      "date_created": "2013-11-29 13:20:00",
+      "1": "First Choice",
+      "13.6": "Spain"
+    },
+    {
+      "date_created": "2013-11-29 13:30:00",
+      "1": "Third Choice",
+      "13.6": "United States"
+    },
+    {
+      "date_created": "2013-11-29 13:40:00",
+      "1": "Second Choice",
+      "13.6": "France"
+    }
+  ]
 }
 ```
 
@@ -1902,6 +1836,11 @@ and source_page.
 
 In order to maintain consistency with the WP API, the POST /entries and POST /forms endpoints no longer accept
 collections. This means that it's no longer possible to create multiple entries or forms in a single request.
+
+### DELETE will trash by default
+Sending DELETE requests will send the resource to the trash instead of deleting it permanently. 
+Repeating the DELETE request will not delete the resource permanently but it will generate a 401 (Gone) response code.
+Use the 'force' parameter to delete the entry or form permanently.
 
 ## Unit Tests
 

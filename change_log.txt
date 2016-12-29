@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------
-Version 2.0-beta-1.1
+Version 2.0-beta-2
     - Added support for optional labels to the GET /entries endpoint.
     - Added support for entry trashing. Entries can only be deleted by sending the force param.
     - Added support for form trashing. Forms can only be deleted by sending the force param.

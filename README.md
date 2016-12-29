@@ -1,15 +1,164 @@
 Gravity Forms REST API Feature Add-On
-==============================
+=====================================
 
 [![Build Status](https://travis-ci.com/gravityforms/gravityformsrestapi.svg?token=dWdigWFPjUjwVzDjbyxv&branch=master)](https://travis-ci.com/gravityforms/gravityformsrestapi)
 
-## Introduction
+# Introduction
 
 This is the development version of the Gravity Forms Web API version 2. When it's ready it'll be integrated into the
 Gravity Forms core.
 
 **This is currently a beta version and should not be run on production sites without a full understanding of the
 possible risks that may be encountered when running beta software.**
+
+## Upgrading to Version 2
+
+The API is intended to feel as familiar as possible to developers who have worked with the WordPres REST API while 
+maintaining as much functionality as possible as version 1. The endpoints are largely the same as version 1, however, 
+the responses are slightly different and authentication is no longer handled by Gravity Forms.
+
+The following breaking changes are required by clients to consume version 2:
+
+### Authentication
+
+If you're using cookie authentication, WordPress supports cookie authentication out of the box so you'll just need 
+to change the way the nonce is created and sent. Create the nonce using wp_create_nonce( 'wp_rest' ) and send it 
+in the _wpnonce data parameter (either POST data or in the query for GET requests), or via the X-WP-Nonce header.
+
+If you're using signature authentication then you'll need to implement either Basic or OAuth authentication. Further details here:
+
+* [WordPress REST API authentication documentation](http://v2.wp-api.org/guide/authentication/)
+* [WP REST API: Setting Up and Using Basic Authentication](https://code.tutsplus.com/tutorials/wp-rest-api-setting-up-and-using-basic-authentication--cms-24762)
+* [WP REST API: Setting Up and Using OAuth 1.0a Authentication](https://code.tutsplus.com/tutorials/wp-rest-api-setting-up-and-using-oauth-10a-authentication--cms-24797)
+
+
+### Specify the Content Type when appropriate
+
+The content-type application/json must be specified when sending JSON.
+
+#### Example
+
+```bash
+curl --data [EXAMPLE_DATA] --header "Content-Type: application/json" https://localhost/wp-json/gf/v2
+```
+
+### No Response Envelope
+
+The response will not be enveloped by default. This means that the response will not be a JSON string containing the
+"status" and "response" - the body will contain the response and the HTTP code will contain the status. 
+
+The WP-API will envelope the response if the _envelope param is included in the request.
+
+#### Example
+
+**Standard response:**
+
+```json
+{
+    "3":                "Drop Down First Choice",
+    "created_by":       "1",
+    "currency":         "USD",
+    "date_created":     "2016-10-10 18:06:12",
+    "form_id":          "1",
+    "id":               "1",
+    "ip":               "127.0.0.1",
+    "is_fulfilled":     null,
+    "is_read":          0,
+    "is_starred":       0,
+    "payment_amount":   null,
+    "payment_date":     null,
+    "payment_method":   null,
+    "payment_status":   null,
+    "post_id":          null,
+    "source_url":       "http://localhost?gf_page=preview&id=1",
+    "status":           "active",
+    "transaction_id":   null,
+    "transaction_type": null,
+    "user_agent":       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36"
+}
+```
+**Response with _envelope parameter:**
+
+```json
+{
+    "body": {
+        "3":                "Drop Down First Choice",
+        "created_by":       "1",
+        "currency":         "USD",
+        "date_created":     "2016-10-10 18:06:12",
+        "form_id":          "1",
+        "id":               "1",
+        "ip":               "127.0.0.1",
+        "is_fulfilled":     null,
+        "is_read":          0,
+        "is_starred":       0,
+        "payment_amount":   null,
+        "payment_date":     null,
+        "payment_method":   null,
+        "payment_status":   null,
+        "post_id":          null,
+        "source_url":       "http://localhost?gf_page=preview&id=1",
+        "status":           "active",
+        "transaction_id":   null,
+        "transaction_type": null,
+        "user_agent":       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36"
+    },
+    "headers": {
+        "Allow": "GET, POST, PUT, PATCH, DELETE"
+    },
+    "status": 200
+}
+```
+
+### Form Submissions
+
+The Form Submissions endpoint now accepts application/json, application/x-www-form-urlencoded and multipart/form-data 
+content types. With the introduction of support for multipart/form-data now files can be sent to single file upload fields.
+
+Request values should be sent all together instead of in separate elements for input_values, field_values, target_page 
+and source_page.
+
+#### Example
+
+**Example body of a JSON request:**
+
+```json
+{
+    "input_1":      "test",
+    "field_values": "",
+    "source_page":  1,
+    "target_page":  0
+}
+```
+
+### POST Single Resources
+
+In order to maintain consistency with the WP API, the POST /entries and POST /forms endpoints no longer accept
+collections. This means that it's no longer possible to create multiple entries or forms in a single request.
+
+### DELETE now trashes
+Sending DELETE requests will send the resource to the trash instead of deleting it permanently. 
+Repeating the DELETE request will not delete the resource permanently but it will generate a 401 (Gone) response code.
+Use the 'force' parameter to delete the entry or form permanently.
+
+### DELETE, POST and PUT responses
+Successful DELETE, POST and PUT requests now return the deleted, updated or created entry or form instead of a confirmation message. 
+
+## Unit Tests
+
+The unit tests can be installed from the terminal using:
+
+```bash
+bash tests/bin/install.sh [DB_NAME] [DB_USER] [DB_PASSWORD] [DB_HOST]
+```
+
+If you're using [VVV](https://github.com/Varying-Vagrant-Vagrants/VVV) you can use this command:
+
+```bash
+bash tests/bin/install.sh wordpress_unit_tests root root localhost
+```
+
+# API Documentation
 
 ## Authentication
 
@@ -545,6 +694,9 @@ Updates an entry based on the specified entry ID.
 
     https://localhost/wp-json/gf/v2/entries/1
     
+#### Response *[json]*
+When updating an entry, the response body will contain the complete updated entry.
+    
 #### Required Arguments
 
 * **id** *[int]*
@@ -723,7 +875,7 @@ the entry permanently but the response code will be 410 (Gone). Use the 'force' 
     https://localhost/wp-json/gf/v2/entries/1
     https://localhost/wp-json/gf/v2/entries/1?force=1
     
-#### Response *[string|json]*
+#### Response *[json]*
 
 * **Success** *[json]*  
 
@@ -848,6 +1000,93 @@ Creates a form.
         }
         ```
 
+------------------------------------------------------------------------------------------------------------------------
+
+### PUT /forms
+
+Updates a form.
+
+#### Path
+
+    https://localhost/wp-json/gf/v2/forms
+    
+#### Response
+
+* **Success** *[json]*
+
+    The updated form.
+    
+* **Failure** *[json]*
+
+  ```json
+  {
+    "code":    "missing_form_json",
+    "message": "The Form object must be sent as a JSON string in the request body with the content-type header set to application\/json.",
+    "data": {
+    "status": 400
+    }
+  }
+  ```
+
+#### Required Arguments
+
+* **title** *[string]*  
+  
+    The form title.
+  
+    * **Example**  
+    
+        Sets the form title as *Form Title*  
+      
+        ```json
+        {
+          "title": "Form Title"
+        }
+        ```
+------------------------------------------------------------------------------------------------------------------------
+
+### DELETE /forms
+
+Sends the specified form to the trash. If the form is already in the trash then repeating this request will not delete 
+the form permanently but the response code will be 410 (Gone). Use the 'force' parameter to delete the entry permanently.
+
+#### Path
+
+    https://localhost/wp-json/gf/v2/forms
+    
+#### Response
+
+* **Success** *[json]*
+
+    The deleted form.
+    
+* **Failure** *[json]*
+
+  ```json
+  {
+    "code":    "gf_form_invalid_id",
+    "message": "Invalid form id.",
+    "data": {
+    "status": 404
+    }
+  }
+  ```
+
+#### Required Arguments
+
+* **title** *[string]*  
+  
+    The form title.
+  
+    * **Example**  
+    
+        Sets the form title as *Form Title*  
+      
+        ```json
+        {
+          "title": "Form Title"
+        }
+        ```
 ------------------------------------------------------------------------------------------------------------------------
 
 ### GET /forms/[FORM_ID]
@@ -1716,142 +1955,3 @@ Submits the specified form ID with the specified values.
 
 ------------------------------------------------------------------------------------------------------------------------
 
-## Upgrading to Version 2
-
-The API is largely the same as version 1. The endpoints are the same, however, authentication is no longer handled by Gravity Forms. 
-
-The following breaking changes are required by clients to consume version 2:
-
-### Authentication
-
-If you're using cookie authentication, WordPress supports cookie authentication out of the box so you'll just need to change the way the nonce is created and sent. Create the nonce using wp_create_nonce( 'wp_rest' ) and send it in the _wpnonce data parameter (either POST data or in the query for GET requests), or via the X-WP-Nonce header.
-
-If you're using signature authentication then you'll need to implement either Basic or OAuth authentication. Further details here:
-
-* [WordPress REST API authentication documentation](http://v2.wp-api.org/guide/authentication/)
-* [WP REST API: Setting Up and Using Basic Authentication](https://code.tutsplus.com/tutorials/wp-rest-api-setting-up-and-using-basic-authentication--cms-24762)
-* [WP REST API: Setting Up and Using OAuth 1.0a Authentication](https://code.tutsplus.com/tutorials/wp-rest-api-setting-up-and-using-oauth-10a-authentication--cms-24797)
-
-
-### Specify the Content Type when appropriate
-
-The content-type application/json must be specified when sending JSON.
-
-#### Example
-
-```bash
-curl --data [EXAMPLE_DATA] --header "Content-Type: application/json" https://localhost/wp-json/gf/v2
-```
-
-### No Response Envelope
-
-The response will not be enveloped by default. This means that the response will not be a JSON string containing the
-"status" and "response" - the body will contain the response and the HTTP code will contain the status. 
-
-The WP-API will envelope the response if the _envelope param is included in the request.
-
-#### Example
-
-**Standard response:**
-
-```json
-{
-    "3":                "Drop Down First Choice",
-    "created_by":       "1",
-    "currency":         "USD",
-    "date_created":     "2016-10-10 18:06:12",
-    "form_id":          "1",
-    "id":               "1",
-    "ip":               "127.0.0.1",
-    "is_fulfilled":     null,
-    "is_read":          0,
-    "is_starred":       0,
-    "payment_amount":   null,
-    "payment_date":     null,
-    "payment_method":   null,
-    "payment_status":   null,
-    "post_id":          null,
-    "source_url":       "http://localhost?gf_page=preview&id=1",
-    "status":           "active",
-    "transaction_id":   null,
-    "transaction_type": null,
-    "user_agent":       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36"
-}
-```
-**Response with _envelope parameter:**
-
-```json
-{
-    "body": {
-        "3":                "Drop Down First Choice",
-        "created_by":       "1",
-        "currency":         "USD",
-        "date_created":     "2016-10-10 18:06:12",
-        "form_id":          "1",
-        "id":               "1",
-        "ip":               "127.0.0.1",
-        "is_fulfilled":     null,
-        "is_read":          0,
-        "is_starred":       0,
-        "payment_amount":   null,
-        "payment_date":     null,
-        "payment_method":   null,
-        "payment_status":   null,
-        "post_id":          null,
-        "source_url":       "http://localhost?gf_page=preview&id=1",
-        "status":           "active",
-        "transaction_id":   null,
-        "transaction_type": null,
-        "user_agent":       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36"
-    },
-    "headers": {
-        "Allow": "GET, POST, PUT, PATCH, DELETE"
-    },
-    "status": 200
-}
-```
-
-### Form Submissions
-
-The Form Submissions endpoint now accepts application/json, application/x-www-form-urlencoded and multipart/form-data 
-content types. With the introduction of support for multipart/form-data now files can be sent to single file upload fields.
-
-Request values should be sent all together instead of in separate elements for input_values, field_values, target_page 
-and source_page.
-
-#### Example
-
-**Example body of a JSON request:**
-
-```json
-{
-    "input_1":      "test",
-    "field_values": "",
-    "source_page":  1,
-    "target_page":  0
-}
-```
-
-### POST Single Resources
-
-In order to maintain consistency with the WP API, the POST /entries and POST /forms endpoints no longer accept
-collections. This means that it's no longer possible to create multiple entries or forms in a single request.
-
-### DELETE will trash by default
-Sending DELETE requests will send the resource to the trash instead of deleting it permanently. 
-Repeating the DELETE request will not delete the resource permanently but it will generate a 401 (Gone) response code.
-Use the 'force' parameter to delete the entry or form permanently.
-
-## Unit Tests
-
-The unit tests can be installed from the terminal using:
-
-```bash
-bash tests/bin/install.sh [DB_NAME] [DB_USER] [DB_PASSWORD] [DB_HOST]
-```
-
-If you're using [VVV](https://github.com/Varying-Vagrant-Vagrants/VVV) you can use this command:
-
-```bash
-bash tests/bin/install.sh wordpress_unit_tests root root localhost
-```

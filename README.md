@@ -13,17 +13,17 @@ possible risks that may be encountered when running beta software.**
 
 ## Upgrading to Version 2
 
-The API is intended to feel as familiar as possible to developers who have worked with the WordPres REST API while 
-maintaining as much functionality as possible as version 1. The endpoints are largely the same as version 1, however, 
+The API is intended to feel as familiar as possible to developers who have worked with the WordPres REST API while
+maintaining as much functionality as possible as version 1. The endpoints are largely the same as version 1, however,
 the responses are slightly different and authentication is no longer handled by Gravity Forms.
 
 The following breaking changes are required by clients to consume version 2:
 
 ### Authentication
 
-If you're using cookie authentication, WordPress supports cookie authentication out of the box so you'll just need 
-to change the way the nonce is created and sent. Create the nonce using wp_create_nonce( 'wp_rest' ) and send it 
-in the _wpnonce data parameter (either POST data or in the query for GET requests), or via the X-WP-Nonce header.
+If you're using cookie authentication, WordPress supports cookie authentication out of the box so you'll just need
+to change the way the nonce is created and sent. Create the nonce using wp_create_nonce( 'wp_rest' ) and send it
+in the \_wpnonce data parameter (either POST data or in the query for GET requests), or via the X-WP-Nonce header.
 
 If you're using signature authentication then you'll need to implement either Basic or OAuth authentication. Further details here:
 
@@ -45,9 +45,9 @@ curl --data [EXAMPLE_DATA] --header "Content-Type: application/json" https://loc
 ### No Response Envelope
 
 The response will not be enveloped by default. This means that the response will not be a JSON string containing the
-"status" and "response" - the body will contain the response and the HTTP code will contain the status. 
+"status" and "response" - the body will contain the response and the HTTP code will contain the status.
 
-The WP-API will envelope the response if the _envelope param is included in the request.
+The WP-API will envelope the response if the \_envelope param is included in the request.
 
 #### Example
 
@@ -112,10 +112,10 @@ The WP-API will envelope the response if the _envelope param is included in the 
 
 ### Form Submissions
 
-The Form Submissions endpoint now accepts application/json, application/x-www-form-urlencoded and multipart/form-data 
+The Form Submissions endpoint now accepts application/json, application/x-www-form-urlencoded and multipart/form-data
 content types. With the introduction of support for multipart/form-data now files can be sent to single file upload fields.
 
-Request values should be sent all together instead of in separate elements for input_values, field_values, target_page 
+Request values should be sent all together instead of in separate elements for input_values, field_values, target_page
 and source_page.
 
 #### Example
@@ -137,12 +137,12 @@ In order to maintain consistency with the WP API, the POST /entries and POST /fo
 collections. This means that it's no longer possible to create multiple entries or forms in a single request.
 
 ### DELETE now trashes
-Sending DELETE requests will send the resource to the trash instead of deleting it permanently. 
+Sending DELETE requests will send the resource to the trash instead of deleting it permanently.
 Repeating the DELETE request will not delete the resource permanently but it will generate a 401 (Gone) response code.
 Use the 'force' parameter to delete the entry or form permanently.
 
 ### DELETE, POST and PUT responses
-Successful DELETE, POST and PUT requests now return the deleted, updated or created entry or form instead of a confirmation message. 
+Successful DELETE, POST and PUT requests now return the deleted, updated or created entry or form instead of a confirmation message.
 
 ## Unit Tests
 
@@ -175,11 +175,11 @@ WordPress' authentication, the following resources are available:
 The API can be accessed as route from the WordPress REST API. This should look something like this:
 
     https://localhost/wp-json/gf/v2/
-    
+
 For example, to obtain the Gravity Forms entry with ID 5, your request would be made to the following:
 
     https://localhost/wp-json/gf/v2/entries/5
-    
+
 ## Sending Requests
 
 ### PHP
@@ -196,21 +196,21 @@ $args = array(
 
 // Make the request to the API.
 $response = wp_remote_get( $url, $args );
- 
+
 // Check the response code.
 if ( wp_remote_retrieve_response_code( $response ) != 200 || ( empty( wp_remote_retrieve_body( $response ) ) ) ){
     // If not a 200, HTTP request failed.
     die( 'There was an error attempting to access the API.' );
 }
-   
+
 // Result is in the response body and is json encoded.
 $body = json_decode( wp_remote_retrieve_body( $response ), true );
- 
+
 // Check the response body.
 if( $body['status'] > 202 ){
     die( "Could not retrieve forms." );
 }
-   
+
 // Entries retrieved successfully.
 $entries = $body['response'];
 ```
@@ -224,7 +224,7 @@ In this example, the *$entries* variable contains the response from the API requ
 Gets all entries.
 
 #### Path
-   
+
     https://localhost/wp-json/gf/v2/entries
 
 #### Response *[json]*
@@ -262,13 +262,13 @@ The response will contain a JSON object which contains the entry details. An exa
 * **labels** *[int]*
 
     Enabled the inclusion of field labels in the results.  
-   
+
     * **Usage**
-    
+
             https://localhost/wp-json/gf/v2/entries?labels=1
-  
+
     * **Example Response**
-    
+
         ```json
         {
           "id":           "71",
@@ -325,11 +325,11 @@ The response will contain a JSON object which contains the entry details. An exa
                 The value to search for.
 
             * **operator** *[string]*  
-        
+
                 The comparison operator to use.
-  
+
         * **Usage**
-    
+
             ```json
             {
               "field_filters": [{
@@ -341,47 +341,47 @@ The response will contain a JSON object which contains the entry details. An exa
             ```
 
     * **paging** *[array]*
-    
+
         The paging criteria.
-    
+
         * **Properties**
-    
+
             * **page_size** *[int]*
-        
+
                 The number of results per page.
-            
+
             * **current_page** *[int]*
-        
+
                 The current page to pull details from.
-            
+
             * **offset** *[int]*
-        
+
                 The offset to begin with.
-        
+
         * **Usage**
-    
+
                 https://localhost/wp-json/gf/v2/entries?paging[page_size]=20&paging[current_page]=2&paging[offset]=30
 
     * **sorting** *[array]*
-    
+
         The sorting criteria.
-  
+
         * **Properties**
-    
+
             * **key** *[string|int]*
-        
+
                 The key to sort by.
-            
+
             * **direction** *[string]*
-        
+
                 The direction. Either *ASC* or *DESC*.
-            
+
             * **is_numeric** *[bool]*
-        
+
                 If the key is numeric.
-  
+
         * **Usage**
-    
+
                 https://localhost/wp-json/gf/v2/entries?sorting[key]=id&sorting[direction]=ASC&sorting[is_numeric]=true
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -393,22 +393,22 @@ Creates an entry.
 #### Path
 
     https://localhost/wp-json/gf/v2/entries
-    
+
 #### Response *[json]*
 
 When creating an entry, the response body will contain the complete new entry.
 
-    
+
 #### Required Arguments
 
 * **form_id** *[int]*
 
     The Form ID for the entry.
-  
+
     * **Example**
-    
+
         Associates the entry with form ID *1*.
-        
+
             form_id=1
 
 #### Optional Arguments
@@ -416,91 +416,91 @@ When creating an entry, the response body will contain the complete new entry.
 * **created_by** *[string]*  
 
     The user ID of the entry submitter.
-  
+
     * **Example**
-    
+
         Sets the entry submitter as the user with user ID *1*.  
-        
+
             created_by=1
 
 * **date_created** *[string]*
-    
+
     The date the entry was created, in UTC.
-  
+
     * **Example**
-        
+
         Sets the date created as *2016-11-28 18:12:17*.
-            
+
             date_created=2016-11-28+18%3A12%3A17
 
 * **ip** *[string]*
 
     The IP address of the entry creator.
-  
+
     * **Example**
-    
+
         Sets the entry IP as *127.0.0.1*.
-        
+
             ip=127.0.0.1
 
 * **is_fulfilled** *[bool]*
 
     Whether the transaction has been fulfilled, if applicable.
-  
+
     * **Example**
-    
+
         Sets the entry as fulfilled.
-        
+
             is_fulfilled=1
 
 * **is_read** *[bool]*
 
     Whether the entry has been read.
-  
+
     * **Example**
-    
+
         Marks the entry as read.
-        
+
             is_read=1
 
 * **is_starred** *[bool]*
 
     Whether the entry is starred.
-  
+
     * **Example**  
-    
+
         Stars the entry.
-        
+
             is_starred=1
 
 * **source_url** *[string]*
 
     The URL where the form was embedded.
-    
+
     * **Examples**
-    
+
         Set the source URL as *http://localhost/pagename*:
-        
+
             source_url=http%3A%2F%2Flocalhost%2Fpagename
 
 * **status** *[string]*
 
     The status of the entry.
-  
+
     * **Examples**
-    
+
         Sets the status to *active*:
-      
+
              status=active
 
 * **user_agent** *[string]*
 
     The user agent string for the browser used to submit the entry.
-    
+
     * **Examples**
-    
+
         Sets the user agent as *Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36*
-        
+
             user_agent=Mozilla%2F5.0+%28Macintosh%3B+Intel+Mac+OS+X+10_12_2%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F54.0.2840.87+Safari%2F537.36``
 
 #### Payment Arguments
@@ -508,85 +508,85 @@ When creating an entry, the response body will contain the complete new entry.
 * **payment_amount** *[int]*
 
     The amount of the payment, if applicable.
-  
+
     * **Limitations**
-    
+
         Only applies when payment fields are present.
-      
+
     * **Examples**
-    
+
         Sets the payment amount of *$2500*.
-        
+
             payment_amount=2500
 
 * **payment_date** *[string]*
 
     The date of the payment, if applicable.
-    
+
     * **Limitations**  
-    
+
           Only applies when payment fields are present.
-    
+
     * **Example**
-    
+
         Sets the payment date as *2016-11-28 18:12:17*.  
-      
+
             payment_date=2016-11-28+18%3A12%3A17
 
 * **payment_method** *[string]*  
 
     The payment method for the payment, if applicable.
-  
+
     * **Limitations**  
-    
+
         Only applies when payment fields are present.
-  
+
     * **Example**
-    
+
         Sets the payment method as *Stripe*.
-        
+
             payment_method=Stripe
 
 * **payment_status** *[string]*  
 
     The status of the payment, if applicable.
-    
+
     * **Limitations**  
-    
+
         Only applies when payment fields are present.
-      
+
     * **Example**
-    
+
         Sets the payment status as *Paid*.
-        
+
             payment_status=Paid
 
 * **transaction_id** *[string]*
 
     The transaction ID for the payment, if applicable.
-  
-    * **Limitations** 
-     
+
+    * **Limitations**
+
         Only applies when payment fields are present.
-      
+
     * **Example**  
-    
+
         Sets the transaction ID as *1234*.  
-        
+
             transaction_id=1234
 
 * **transaction_type** *[string]*
 
     The type of the transaction, if applicable.
-  
+
     * **Limitations**  
-    
+
         Only applies when payment fields are present.
-  
+
     * **Example**
-    
+
         Sets the *Subscription* transaction type.  
-        
+
             transaction_type=Subscription
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -600,11 +600,11 @@ Gets an entry based on the entry ID.
 * **Single entry**  
 
         https://localhost/wp-json/gf/v2/entries/1
-    
+
 * **Multiple entries (semicolon separated)**  
 
         https://localhost/wp-json/gf/v2/entries/1;2;3;4
-    
+
 #### Response *[json]*
 
 The response will contain a JSON object which contains the entry details. An example can be found below:
@@ -640,13 +640,13 @@ The response will contain a JSON object which contains the entry details. An exa
 * **labels** *[int]*
 
     Whether to include the labels.
-  
+
     * **Usage**
-    
+
             https://localhost/wp-json/gf/v2/entries/5?labels=1
-    
+
     * **Example Response**
-  
+
         ```json
         {
           "id":           "71",
@@ -685,7 +685,7 @@ The response will contain a JSON object which contains the entry details. An exa
         ```
 
 ------------------------------------------------------------------------------------------------------------------------
-  
+
 ### PUT /entries/[ENTRY_ID]
 
 Updates an entry based on the specified entry ID.
@@ -693,22 +693,22 @@ Updates an entry based on the specified entry ID.
 #### Path
 
     https://localhost/wp-json/gf/v2/entries/1
-    
+
 #### Response *[json]*
 When updating an entry, the response body will contain the complete updated entry.
-    
+
 #### Required Arguments
 
 * **id** *[int]*
 
     The entry ID to modify.
-  
+
     * **Example**
-    
+
         Sets the entry ID to be updated as *1*.  
-        
+
             id=1
-    
+
 #### Optional Arguments
 
 * **created_by** *[string]*
@@ -716,57 +716,57 @@ When updating an entry, the response body will contain the complete updated entr
     The user ID of the entry submitter.
 
     * **Example**  
-    
+
         Sets the entry submitter as the user with user ID *1*.  
-        
+
             created_by=1
 
 * **date_created** *[string]*  
-    
-    The date the entry was created, in UTC. 
-       
+
+    The date the entry was created, in UTC.
+
     * **Example**  
-        
+
         Sets the date created as *2016-11-28 18:12:17*.  
-        
+
             date_created=2016-11-28+18%3A12%3A17
 
 * **ip** *[string]*  
-    
+
     The IP address of the entry creator.  
-      
+
     * **Example**  
-      
+
         Sets the entry IP as *127.0.0.1*.  
-        
+
             ip=127.0.0.1
 
 * **is_fulfilled** *[bool]*  
 
     Whether the transaction has been fulfilled, if applicable.  
-  
+
     * **Example**  
-      
+
         Sets the entry as fulfilled.  
-        
+
 			is_fulfilled=1
 
 * **is_read** *[bool]*  
 
 	Whether the entry has been read.  
-  
+
 	* **Example**
-	
+
 		Marks the entry as read.
-		
+
 	        is_read=1
 
 * **is_starred** *[bool]*
 
     Whether the entry is starred.  
-  
+
     * **Example**  
-    
+
         Stars the entry.  
 
             is_starred=1
@@ -774,11 +774,11 @@ When updating an entry, the response body will contain the complete updated entr
 * **source_url** *[string]*  
 
     The URL where the form was embedded.  
-  
+
     * **Example**  
-    
+
         Sets the source URL as *http://localhost/pagename*.  
-        
+
             source_url=http%3A%2F%2Flocalhost%2Fpagename
 
 * **status** *[string]*  
@@ -786,19 +786,19 @@ When updating an entry, the response body will contain the complete updated entr
     The status of the entry.
 
     * **Example**
-    
+
         Sets the status to *active*.  
-        
+
             status=active
 
 * **user_agent** *[string]*
 
     The user agent string for the browser used to submit the entry.  
-  
+
     * **Example**
-        
+
         Sets the user agent as *Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36*
-              
+
             user_agent=Mozilla%2F5.0+%28Macintosh%3B+Intel+Mac+OS+X+10_12_2%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F54.0.2840.87+Safari%2F537.36``
 
 #### Payment Arguments
@@ -806,81 +806,81 @@ When updating an entry, the response body will contain the complete updated entr
 * **payment_amount** *[int]*  
 
     The amount of the payment, if applicable.  
-    
+
     * **Example**  
-    
+
         Sets the payment amount of *$2500*.  
-        
+
             payment_amount=2500
 
 * **payment_date** *[string]*
 
     The date of the payment, if applicable.  
-    
+
     * **Example**  
-    
+
         Sets the payment date as *2016-11-28 18:12:17*.  
-        
+
             payment_date=2016-11-28+18%3A12%3A17
 
 * **payment_method** *[string]*  
 
     The payment method for the payment, if applicable.  
-    
+
     * **Example**
-    
+
         Sets the payment method as *Stripe*.  
-        
+
             payment_method=Stripe
 
 * **payment_status** *[string]*
 
     The status of the payment, if applicable.
-    
+
     * **Example**  
-    
+
         Sets the payment status as *Paid*.  
-        
+
             payment_status=Paid
 
 * **transaction_id** *[string]*
 
     The transaction ID for the payment, if applicable.  
-  
+
     * **Example**  
-    
+
         Sets the transaction ID as *1234*.
-        
+
             transaction_id=1234
 
 * **transaction_type** *[string]*  
 
     The type of the transaction, if applicable.  
-  
+
     * **Example**  
-    
-        Sets the *Subscription* transaction type. 
-         
+
+        Sets the *Subscription* transaction type.
+
             transaction_type=Subscription
 
 ------------------------------------------------------------------------------------------------------------------------
 
 ### DELETE /entries/[ENTRY_ID]
 
-Sends the specified entry to the trash. If the entry is already in the trash then repeating this request will not delete 
+Sends the specified entry to the trash. If the entry is already in the trash then repeating this request will not delete
 the entry permanently but the response code will be 410 (Gone). Use the 'force' parameter to delete the entry permanently.
 
 #### Path
 
     https://localhost/wp-json/gf/v2/entries/1
     https://localhost/wp-json/gf/v2/entries/1?force=1
-    
+
 #### Response *[json]*
 
 * **Success** *[json]*  
 
   The trashed or deleted entry.
-  
+
 * **Failure** *[json]*  
 
   ```json
@@ -903,7 +903,7 @@ Gets a specific field or group of fields from an entry. Multiple field IDs can b
 
     https://localhost/wp-json/gf/v2/entries/1/fields/1
     https://localhost/wp-json/gf/v2/entries/1/fields/1;3;5;date_created;13.6
-    
+
 #### Response *[json]*
 
 **Example Response**
@@ -927,7 +927,7 @@ Gets the details of all forms.
 #### Path
 
     https://localhost/wp-json/gf/v2/forms
-    
+
 #### Response *[json]*
 
 ```json
@@ -964,13 +964,13 @@ Creates a form.
 #### Path
 
     https://localhost/wp-json/gf/v2/forms
-    
+
 #### Response
 
 * **Success** *[json]*
 
     The newly created form.
-    
+
 
 * **Failure** *[json]*
 
@@ -987,13 +987,13 @@ Creates a form.
 #### Required Arguments
 
 * **title** *[string]*  
-  
+
     The form title.
-  
+
     * **Example**  
-    
+
         Sets the form title as *Form Title*  
-      
+
         ```json
         {
           "title": "Form Title"
@@ -1009,13 +1009,13 @@ Updates a form.
 #### Path
 
     https://localhost/wp-json/gf/v2/forms
-    
+
 #### Response
 
 * **Success** *[json]*
 
     The updated form.
-    
+
 * **Failure** *[json]*
 
   ```json
@@ -1031,13 +1031,13 @@ Updates a form.
 #### Required Arguments
 
 * **title** *[string]*  
-  
+
     The form title.
-  
+
     * **Example**  
-    
+
         Sets the form title as *Form Title*  
-      
+
         ```json
         {
           "title": "Form Title"
@@ -1047,19 +1047,19 @@ Updates a form.
 
 ### DELETE /forms
 
-Sends the specified form to the trash. If the form is already in the trash then repeating this request will not delete 
+Sends the specified form to the trash. If the form is already in the trash then repeating this request will not delete
 the form permanently but the response code will be 410 (Gone). Use the 'force' parameter to delete the entry permanently.
 
 #### Path
 
     https://localhost/wp-json/gf/v2/forms
-    
+
 #### Response
 
 * **Success** *[json]*
 
     The deleted form.
-    
+
 * **Failure** *[json]*
 
   ```json
@@ -1075,13 +1075,13 @@ the form permanently but the response code will be 410 (Gone). Use the 'force' p
 #### Required Arguments
 
 * **title** *[string]*  
-  
+
     The form title.
-  
+
     * **Example**  
-    
+
         Sets the form title as *Form Title*  
-      
+
         ```json
         {
           "title": "Form Title"
@@ -1096,7 +1096,7 @@ Gets the details of a form based on the specified form ID.
 #### Path
 
     https://localhost/wp-json/gf/v2/forms/1
-    
+
 #### Response
 
 ```json
@@ -1383,19 +1383,19 @@ The response will contain a JSON object which contains the entry details. An exa
   "6.3":          ""
 }
 ```
-    
+
 #### Optional Arguments
 
 * **labels** *[int]*  
 
     Whether to include the labels.
-  
+
     * **Usage**  
-    
+
             https://localhost/wp-json/gf/v2/forms/1/entries?labels=1
-    
+
     * **Example Response**  
-    
+
         ```json
         {
           "id":           "71",
@@ -1436,25 +1436,25 @@ The response will contain a JSON object which contains the entry details. An exa
 * **search** *[json]*  
 
     The search criteria.
-  
+
     * **Usage**
-  
+
         * **field_filters** *array*  
-      
+
             An array of filters to search by.
-            
+
         * **key** *int|float*
-          
+
             The field ID.
-            
+
         * **value**  *string*
-          
+
             The value to search for.
-            
+
         * **operator** *string*
-          
+
             The comparison operator to use.
-  
+
         ```json
         {
           "field_filters": [{
@@ -1468,45 +1468,45 @@ The response will contain a JSON object which contains the entry details. An exa
 * **paging** *[array]*  
 
     The paging criteria.
-    
+
     * **Parameters**
-  
+
         * **page_size** *[int]*  
-    
+
             The number of results per page.
-        
+
         * **current_page** *[int]*  
-    
+
             The current page to pull details from.
-      
+
         * **offset** *[int]*  
-    
+
             The offset to begin with.
-  
+
     * **Usage**  
-    
+
             https://localhost/wp-json/gf/v2/forms/1/entries?paging[page_size]=20&paging[current_page]=2&paging[offset]=30
 
 * **sorting** *[array]*
 
     The sorting criteria.
-    
+
     * **Parameters**
-  
+
         * **key** *[string|int]*  
-    
+
             The key to sort by.
-      
+
         * **direction** *[string]*  
-    
+
             The direction. Either *ASC* or *DESC*.
-      
+
         * **is_numeric** *[bool]*  
-    
+
             If the key is numeric.
-  
+
     * **Usage**  
-    
+
             https://localhost/wp-json/gf/v2/forms/1/entries?sorting[key]=id&sorting[direction]=ASC&sorting[is_numeric]=true
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -1528,93 +1528,93 @@ When creating an entry, the response body will contain the new entry.
 * **created_by** *[string]*
 
     The user ID of the entry submitter.
-  
+
     * **Example**  
-    
+
         Sets the entry submitter as the user with user ID *1*.  
-        
+
             created_by=1
 
 * **date_created** *[string]*  
 
     The date the entry was created, in UTC.  
-  
+
     * **Example**  
-    
+
         Sets the date created as *2016-11-28 18:12:17*.  
-      
+
             date_created=2016-11-28+18%3A12%3A17
 
 * **ip** *[string]*  
 
     The IP address of the entry creator.  
-  
+
     * **Example**
-    
+
         Sets the entry IP as *127.0.0.1*.  
-        
+
             ip=127.0.0.1
 
 * **is_fulfilled** *[bool]*  
 
     Whether the transaction has been fulfilled, if applicable.  
-  
+
     * **Example**  
-    
+
         Sets the entry as fulfilled.  
-      
+
             is_fulfilled=1
 
 * **is_read** *[bool]*  
 
     Whether the entry has been read.  
-  
+
     * **Example**  
-    
+
         Marks the entry as read.  
-    
+
             is_read=1
 
 * **is_starred** *[bool]*  
 
     Whether the entry is starred.  
-  
+
     * **Example**  
-    
+
         Stars the entry.  
-      
+
             is_starred=1
 
 * **source_url** *[string]*  
 
     The URL where the form was embedded.  
-  
+
     * **Example**  
-    
+
         Sets the source URL as *http://localhost/pagename*.  
-      
+
             source_url=http%3A%2F%2Flocalhost%2Fpagename
 
 * **status** *[string]*  
 
     The status of the entry.  
-  
+
     * **Example**
-    
+
         Sets the status to *active*.  
-      
+
             status=active
 
 * **user_agent** *[string]*  
 
     The user agent string for the browser used to submit the entry.  
-  
+
     * **Example**  
-  
+
         Sets the user agent as:  
-    
-        *Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36* 
-         
+
+        *Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36*
+
             user_agent=Mozilla%2F5.0+%28Macintosh%3B+Intel+Mac+OS+X+10_12_2%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F54.0.2840.87+Safari%2F537.36``
 
 #### Payment Arguments
@@ -1622,61 +1622,61 @@ When creating an entry, the response body will contain the new entry.
 * **payment_amount** *[int]*  
 
     The amount of the payment, if applicable.  
-  
+
     * **Example**  
-    
+
         Sets the payment amount of *$2500*.  
-        
+
             payment_amount=2500
 
 * **payment_date** *[string]*  
 
     The date of the payment, if applicable.
-  
+
     * **Example**  
-    
+
         Sets the payment date as *2016-11-28 18:12:17*.  
-        
+
             payment_date=2016-11-28+18%3A12%3A17
 
 * **payment_method** *[string]*  
 
     The payment method for the payment, if applicable.  
-  
+
     * **Example**  
-    
+
         Sets the payment method as *Stripe*.  
-      
+
             payment_method=Stripe
 
 * **payment_status** *[string]*  
 
     The status of the payment, if applicable.  
-  
+
     * **Example**  
-    
+
         Sets the payment status as *Paid*.  
-        
+
             payment_status=Paid
 
 * **transaction_id** *[string]*  
 
     The transaction ID for the payment, if applicable.  
-  
+
     * **Example**  
-    
+
         Sets the transaction ID as *1234*.  
-      
+
             transaction_id=1234
 
 * **transaction_type** *[string]*  
 
     The type of the transaction, if applicable.  
-  
+
     * **Example**  
-    
+
         Sets the *Subscription* transaction type.  
-      
+
             transaction_type=Subscription
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -1690,7 +1690,7 @@ Gets a specific field or group of fields from a group of entries. Multiple field
     https://localhost/wp-json/gf/v2/forms/1/entries/fields/1
     https://localhost/wp-json/gf/v2/forms/1/entries/fields/date_created;1;13.6
 
-    
+
 #### Response *[json]*
 
 **Example Response**  
@@ -1734,7 +1734,7 @@ Gets form details, including entry details.
 #### Path
 
     https://localhost/wp-json/gf/v2/forms/1/results
-    
+
 #### Response
 
 ```json
@@ -1840,11 +1840,11 @@ Gets form details, including entry details.
 #### Optional Arguments
 
 * **search** *[json]*
-    
+
     The search criteria.
-  
+
     * **Parameters**
-  
+
       * **field_filters** *[array]*  
         An array of filters to search by.
       * **key** *[int|float]*  
@@ -1853,9 +1853,9 @@ Gets form details, including entry details.
         The value to search for.
       * **operator** *[string]*  
         The comparison operator to use.
-  
+
     * **Usage**
-    
+
         ```json
         {
           "field_filters": [{
@@ -1867,47 +1867,47 @@ Gets form details, including entry details.
         ```
 
 * **paging** *[array]*  
-    
+
     The paging criteria.
-    
+
     * **Parameters**
-  
+
         * **page_size** *int*  
-    
+
             The number of results per page.
-      
+
         * **current_page** *int*  
-    
+
             The current page to pull details from.
-        
+
         * **offset** *int*  
-    
+
           The offset to begin with.
-  
+
     * **Usage**  
-    
+
             https://localhost/wp-json/gf/v2/forms/1/results?paging[page_size]=20&paging[current_page]=2&paging[offset]=30
 
 * **sorting** *[array]*
 
     The sorting criteria.
-    
+
     * **Parameters**
-  
+
         * **key** *string|int*  
-        
+
             The key to sort by.
-            
+
         * **direction** *string*  
-        
+
             The direction. Either *ASC* or *DESC*.
-            
+
         * **is_numeric** *bool*  
-        
+
             If the key is numeric.
-  
+
     * **Usage**  
-    
+
             https://localhost/wp-json/gf/v2/forms/1/results?sorting[key]=id&sorting[direction]=ASC&sorting[is_numeric]=true
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -1919,15 +1919,15 @@ Submits the specified form ID with the specified values.
 #### Path
 
     https://localhost/wp-json/gf/v2/forms/1/submissions
-    
+
 #### Response
 
 #### Required Arguments
 
 * **input_[FIELD_ID]** *[string]*  
-  
+
     The input values. Replace field ID with the input that you want to submit data for.
-  
+
 #### Returns
 
 ```json
@@ -1944,14 +1944,13 @@ Submits the specified form ID with the specified values.
 * **field_values** *[string]*  
 
     The field values.
-  
+
 * **source_page** *[string]*  
 
     The source page number.
-  
+
 * **target_page** *[string]*  
 
     The target page number.
 
 ------------------------------------------------------------------------------------------------------------------------
-

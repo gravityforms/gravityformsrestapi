@@ -243,11 +243,9 @@ class GF_REST_Form_Entries_Controller extends GF_REST_Controller {
 		return array(
 			'sorting' => array(
 				'description'        => 'The sorting criteria.',
-				'type'               => 'array',
 			),
 			'paging' => array(
 				'description'        => 'The paging criteria.',
-				'type'               => 'array',
 			),
 			'search' => array(
 				'description'        => 'The search criteria.',

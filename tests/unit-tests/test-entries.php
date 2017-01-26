@@ -163,6 +163,26 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 		$this->assertEquals( 10, count( $data['entries'] ) );
 	}
 
+	function test_get_entries_sorting() {
+
+		$this->_create_entries();
+
+		$params = array(
+			'sorting' => array(
+				'key' => 'id',
+				'direction' => 'ASC',
+				'is_numeric' => true,
+			),
+		);
+
+		$request = new WP_REST_Request( 'GET', $this->namespace . '/entries' );
+		$request->set_query_params( $params );
+		$response = $this->server->dispatch( $request );
+		$data = $response->get_data();
+
+		$this->assertEquals( 10, count( $data['entries'] ) );
+	}
+
 	function test_create_entry() {
 		$form_id = $this->get_form_id();
 		$entry = array( 'form_id' => $form_id, 'date_created' => '2016-07-19 11:00:00', '1' => 'Second Choice', '2.2' => 'Second Choice', '8' => '1', '13.6' => 'Spain' );

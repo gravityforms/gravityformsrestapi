@@ -43,8 +43,8 @@ abstract class GF_REST_Controller extends WP_REST_Controller {
 	 * @return array
 	 */
 	public function parse_entry_search_params( $request ) {
-		// sorting parameters
 
+		// Sorting parameters
 		$sorting_param = $request->get_param( 'sorting' );
 		$sort_key = isset( $sorting_param['key'] ) && ! empty( $sorting_param['key'] ) ? $sorting_param['key'] : 'id';
 		$sort_dir = isset( $sorting_param['direction'] ) && ! empty( $sorting_param['direction'] ) ? $sorting_param['direction'] : 'DESC';

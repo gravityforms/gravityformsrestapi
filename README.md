@@ -18,7 +18,7 @@ Support is not offered within this repo, and issue reports are only for issues d
 If you open an issue within GitHub, please provide information on the related code describing the problem. If you are
 unable to do so, please [open a support ticket](https://www.gravityhelp.com/request-support/) instead.
 
-Issues that are not code-related will be immediately closed, and you will be immediately directed to open a support ticket.
+Issues that are not code-related will be immediately closed, and you will be directed to open a support ticket.
 
 ## Upgrading to Version 2
 

@@ -8,6 +8,9 @@ Gravity Forms REST API Feature Add-On
 This is the development version of the Gravity Forms Web API version 2. When it's ready it'll be integrated into the
 Gravity Forms core.
 
+**This is currently a beta version and should not be run on production sites without a full understanding of the
+possible risks that may be encountered when running beta software.**
+
 ## Support
 
 Support is not offered within this repo, and issue reports are only for issues directly related to the plugin's code.
@@ -16,9 +19,6 @@ If you open an issue within GitHub, please provide information on the related co
 unable to do so, please [open a support ticket](https://www.gravityhelp.com/request-support/) instead.
 
 Issues that are not code-related will be immediately closed, and you will be immediately directed to open a support ticket.
-
-**This is currently a beta version and should not be run on production sites without a full understanding of the
-possible risks that may be encountered when running beta software.**
 
 ## Upgrading to Version 2
 

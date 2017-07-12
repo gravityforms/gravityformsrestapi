@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------
+Version 2.0-beta-3-dev
+    - Added the Location header when the confirmation is a redirect.
+
+---------------------------------------------------------------------
 Version 2.0-beta-2
     - Added support for optional labels to the GET /entries endpoint.
     - Added support for entry trashing. Entries can only be deleted by sending the force param.

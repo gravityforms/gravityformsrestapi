@@ -12,7 +12,8 @@ function _manually_load_plugin() {
 		require dirname( dirname( __FILE__ ) ) . '/tmp/gravityforms/gravityforms.php';
 	}
 	require dirname( dirname( __FILE__ ) ) . '/restapi.php';
-	GFForms::setup( true );
+	//GFForms::setup( true );
+	gf_upgrade()->install();
 
 	/*
 	add_filter( 'determine_current_user', function( $user_id ) {

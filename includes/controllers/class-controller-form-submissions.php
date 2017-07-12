@@ -64,6 +64,10 @@ class GF_REST_Form_Submissions_Controller extends GF_REST_Controller {
 
 		$response = $this->prepare_item_for_response( $result, $request );
 
+		if ( isset( $result['confirmation_type'] ) && $result['confirmation_type'] == 'redirect' ) {
+			$response->header( 'Location', $result['confirmation_redirect'] );
+		}
+
 		return $response;
 	}
 

@@ -50,12 +50,6 @@ before_script:
         ;;
     esac
   fi
-- npm --version
-- node --version
-- nvm install 6.9.1
-- npm install -g grunt-cli
-- npm install
-- npm prune
 - mysql --version
 - phpenv versions
 - php --version
@@ -64,8 +58,6 @@ before_script:
   if [[ "$TRAVIS_PHP_VERSION" != 'hhvm' ]]; then
     php -m
   fi
-- npm --version
-- node --version
 - which phpunit
 - phpunit --version
 - curl --version

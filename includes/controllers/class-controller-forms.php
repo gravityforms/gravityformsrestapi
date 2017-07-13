@@ -366,7 +366,7 @@ class GF_REST_Forms_Controller extends GF_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Request object
 	 *
-	 * @return WP_Error|object $prepared_item
+	 * @return WP_Error|array $prepared_item
 	 */
 	protected function prepare_item_for_database( $request ) {
 		$form_json = $request->get_json_params();
@@ -379,6 +379,10 @@ class GF_REST_Forms_Controller extends GF_REST_Controller {
 			}
 		}
 		$form = json_decode( $form_json, true );
+
+		$form = GFFormsModel::convert_field_objects( $form );
+
+		$form = GFFormsModel::sanitize_settings( $form );
 
 		return $form;
 	}

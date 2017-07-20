@@ -2,6 +2,7 @@
 Version 2.0-rc-1
     - Added the Location header when the confirmation is a redirect.
     - Added sanitization to the /forms endpoint.
+    - Added the entries/<entry-id>/notifications endpoint which (re)sends notifications.
     - Fixed the status code for invalid submissions.
 
 ---------------------------------------------------------------------

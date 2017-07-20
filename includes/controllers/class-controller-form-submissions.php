@@ -99,7 +99,9 @@ class GF_REST_Form_Submissions_Controller extends GF_REST_Controller {
 	 */
 	public function prepare_item_for_response( $item, $request ) {
 
-		$response = new WP_REST_Response( $item, 200 );
+		$status = $item['is_valid'] ? 200 : 400;
+
+		$response = new WP_REST_Response( $item, $status );
 
 		return $response;
 	}

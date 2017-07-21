@@ -27,7 +27,7 @@ class GF_REST_Entry_Notifications_Controller extends GF_REST_Controller {
 				'methods'         => WP_REST_Server::CREATABLE,
 				'callback'        => array( $this, 'create_item' ),
 				'permission_callback' => array( $this, 'create_item_permissions_check' ),
-				'args'            => array(),
+				'args'            => $this->get_collection_params(),
 			),
 		) );
 	}
@@ -107,18 +107,13 @@ class GF_REST_Entry_Notifications_Controller extends GF_REST_Controller {
 	 * @return array
 	 */
 	public function get_collection_params() {
-		return array();
-	}
-
-	/**
-	 * Get the Entry Property schema, conforming to JSON Schema.
-	 *
-	 * @since  2.0-rc-1
-	 * @access public
-	 *
-	 * @return array
-	 */
-	public function get_item_schema() {
-		return array();
+		return array(
+			'include' => array(
+				'description' => 'Limit the notifications to specific IDs.',
+			),
+			'event'   => array(
+				'description' => 'The event to trigger. Default: form_submission.',
+			),
+		);
 	}
 }

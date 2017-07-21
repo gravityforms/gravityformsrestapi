@@ -407,19 +407,6 @@ Creates an entry.
 
 When creating an entry, the response body will contain the complete new entry.
 
-
-#### Required Arguments
-
-* **form_id** *[int]*
-
-    The Form ID for the entry.
-
-    * **Example**
-
-        Associates the entry with form ID *1*.
-
-            form_id=1
-
 #### Optional Arguments
 
 * **created_by** *[string]*  
@@ -706,17 +693,6 @@ Updates an entry based on the specified entry ID.
 #### Response *[json]*
 When updating an entry, the response body will contain the complete updated entry.
 
-#### Required Arguments
-
-* **id** *[int]*
-
-    The entry ID to modify.
-
-    * **Example**
-
-        Sets the entry ID to be updated as *1*.  
-
-            id=1
 
 #### Optional Arguments
 
@@ -871,6 +847,47 @@ When updating an entry, the response body will contain the complete updated entr
         Sets the *Subscription* transaction type.
 
             transaction_type=Subscription
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+### POST /entries/[ENTRY_ID]/notifications
+
+Sends the notifications for the given entry.
+
+#### Path
+
+    https://localhost/wp-json/gf/v2/entries/1/notifications
+
+#### Response *[json]*
+
+* **Success** *[json]*  
+
+  "Notifications sent"
+
+#### Optional Arguments
+
+* **include** *[array]*
+
+    Limit the notifications to specific IDs.
+
+    * **Example**  
+
+        Sets the entry submitter as the user with user ID *1*.  
+
+            include[]=574ff8257d864&include[]=596e543d90b46
+
+* **event** *[string]*  
+
+    The event to trigger. Default: form_submission.
+
+    * **Example**  
+
+        Sets the date created as *2016-11-28 18:12:17*.  
+
+            event=form_submission
+
+
 
 ------------------------------------------------------------------------------------------------------------------------
 

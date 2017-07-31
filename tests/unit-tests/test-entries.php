@@ -69,7 +69,7 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 		$this->assertEquals( 50, $data['total_count'] );
 
 		// Repeat the request with labels
-		$request->set_query_params( array( 'labels' => 1 ) );
+		$request->set_query_params( array( '_labels' => 1 ) );
 
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -78,8 +78,8 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 		$this->assertEquals( 50, $data['total_count'] );
 
 		// Entry level labels when no form is specified
-		$this->assertArrayNotHasKey( 'labels', $data['entries'] );
-		$this->assertArrayHasKey( 'labels', $data['entries'][0] );
+		$this->assertArrayNotHasKey( '_labels', $data['entries'] );
+		$this->assertArrayHasKey( '_labels', $data['entries'][0] );
 
 	}
 
@@ -96,15 +96,15 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 		$entry = $response->get_data();
 
 		$this->assertEquals( $first_entry_id, $entry['id'] );
-		$this->assertArrayNotHasKey( 'labels', $entry );
+		$this->assertArrayNotHasKey( '_labels', $entry );
 
 		// Repeat the request with labels
-		$request->set_query_params( array( 'labels' => 1 ) );
+		$request->set_query_params( array( '_labels' => 1 ) );
 
 		$response = $this->server->dispatch( $request );
 		$entry = $response->get_data();
 
-		$this->assertArrayHasKey( 'labels', $entry );
+		$this->assertArrayHasKey( '_labels', $entry );
 	}
 
 	function test_get_entries_by_ids() {

@@ -81,7 +81,8 @@ class Tests_GF_REST_API_Entry_Properties extends GF_UnitTestCase {
 		$this->assertEquals( 400, $status );
 
 		$request = new WP_REST_Request( 'PUT', $this->namespace . '/entries/' . $entry_id . '/properties' );
-		$request->set_body_params( $properties );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( json_encode( $properties ) );
 		$response = $this->server->dispatch( $request );
 		$result = $response->get_data();
 

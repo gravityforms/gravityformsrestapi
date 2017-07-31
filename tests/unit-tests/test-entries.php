@@ -188,7 +188,8 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 		$entry = array( 'form_id' => $form_id, 'date_created' => '2016-07-19 11:00:00', '1' => 'Second Choice', '2.2' => 'Second Choice', '8' => '1', '13.6' => 'Spain' );
 
 		$request = new WP_REST_Request( 'POST', $this->namespace . '/entries' );
-		$request->set_body_params( $entry );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( json_encode( $entry ) );
 		$response = $this->server->dispatch( $request );
 		$added_entry = $response->get_data();
 
@@ -215,7 +216,8 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 		$entry[1] = 'testing';
 
 		$request = new WP_REST_Request( 'PUT', $this->namespace . '/entries/' . $entry_id );
-		$request->set_body_params( $entry );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( json_encode( $entry ) );
 		$response = $this->server->dispatch( $request );
 		$result = $response->get_data();
 

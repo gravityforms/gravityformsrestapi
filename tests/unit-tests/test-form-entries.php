@@ -88,7 +88,8 @@ class Tests_GF_REST_API_Form_Entries extends GF_UnitTestCase {
 		$entry = array( 'form_id' => $form_id, 'date_created' => '2016-07-19 11:00:00', '1' => 'Second Choice', '2.2' => 'Second Choice', '8' => '1', '13.6' => 'Spain' );
 
 		$request = new WP_REST_Request( 'POST', $this->namespace . '/forms/' . $form_id .'/entries' );
-		$request->set_body_params( $entry );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( json_encode( $entry ) );
 		$response = $this->server->dispatch( $request );
 		$entry = $response->get_data();
 

@@ -103,9 +103,9 @@ class GF_REST_Entry_Properties_Controller extends GF_REST_Form_Entries_Controlle
 	 * @return WP_Error|array $prepared_item
 	 */
 	protected function prepare_item_for_database( $request ) {
-		$properties = $request->get_body_params();
+		$properties = $request->get_json_params();
 		if ( empty( $properties ) ) {
-			$properties = $request->get_body_params();
+			return new WP_Error( 'missing_properties', __( 'Missing Key Value Pairs JSON', 'gravityforms' ) );
 		}
 
 		return $properties;

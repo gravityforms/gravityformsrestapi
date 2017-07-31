@@ -338,11 +338,7 @@ class GF_REST_Entries_Controller extends GF_REST_Form_Entries_Controller {
 		$entry = $request->get_json_params();
 
 		if ( empty( $entry ) ) {
-			$entry = $request->get_body_params();
-		}
-
-		if ( empty( $entry ) ) {
-			return new WP_Error( 'missing_entry', __( 'Missing entry', 'gravityforms' ) );
+			return new WP_Error( 'missing_entry', __( 'Missing entry JSON', 'gravityforms' ) );
 		}
 
 		$entry_id = $request['entry_id'];

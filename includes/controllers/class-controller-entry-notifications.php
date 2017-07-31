@@ -59,13 +59,14 @@ class GF_REST_Entry_Notifications_Controller extends GF_REST_Controller {
 			return new WP_Error( __( 'Form not found.', 'gravityforms' ) );
 		}
 
-		$notification_ids = $request['include'];
+		$notification_ids = $request['_notifications'];
 
-		if ( ! empty( $notification_ids ) && ! is_array( $notification_ids ) ) {
-			$notification_ids = array( $notification_ids );
+		if ( ! empty( $notification_ids ) ) {
+			$notification_ids = (array) explode( ',', $request['_notifications'] );
+			$notification_ids = array_map( 'trim', $notification_ids );
 		}
 
-		$event = isset( $request['event'] ) ? $request['event'] : 'form_submission';
+		$event = isset( $request['_event'] ) ? $request['_event'] : 'form_submission';
 
 		if ( empty( $notification_ids ) ) {
 			GFAPI::send_notifications( $form, $entry, $event );

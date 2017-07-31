@@ -85,9 +85,16 @@ class Tests_GF_REST_API_Form_Entries extends GF_UnitTestCase {
 
 	function test_create_entry() {
 		$form_id = $this->get_form_id();
-		$entry = array( 'form_id' => $form_id, 'date_created' => '2016-07-19 11:00:00', '1' => 'Second Choice', '2.2' => 'Second Choice', '8' => '1', '13.6' => 'Spain' );
+		$entry = array(
+			'form_id'      => $form_id,
+			'date_created' => '2016-07-19 11:00:00',
+			'1'            => 'Second Choice',
+			'2.2'          => 'Second Choice',
+			'8'            => '1',
+			'13.6'         => 'Spain',
+		);
 
-		$request = new WP_REST_Request( 'POST', $this->namespace . '/forms/' . $form_id .'/entries' );
+		$request = new WP_REST_Request( 'POST', $this->namespace . '/forms/' . $form_id . '/entries' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body( json_encode( $entry ) );
 		$response = $this->server->dispatch( $request );
@@ -107,8 +114,11 @@ class Tests_GF_REST_API_Form_Entries extends GF_UnitTestCase {
 
 		$entry = $entries[0];
 
-		$request = new WP_REST_Request( 'GET', $this->namespace . '/forms/' . $form_id .  '/entries/fields/1;13.6;date_created' );
-
+		$request = new WP_REST_Request( 'GET', $this->namespace . '/forms/' . $form_id . '/entries' );
+		$request->set_query_params( array(
+				'_fields' => '1,13.6,date_created',
+			)
+		);
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$verify_fields = $data['entries'][0];

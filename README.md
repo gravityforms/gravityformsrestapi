@@ -268,13 +268,13 @@ The response will contain a JSON object which contains the entry details. An exa
 
 #### Optional Arguments
 
-* **labels** *[int]*
+* **_labels** *[int]*
 
     Enabled the inclusion of field labels in the results.  
 
     * **Usage**
 
-            https://localhost/wp-json/gf/v2/entries?labels=1
+            https://localhost/wp-json/gf/v2/entries?_labels=1
 
     * **Example Response**
 
@@ -299,7 +299,7 @@ The response will contain a JSON object which contains the entry details. An exa
           "6.1":          "",
           "6.2":          "",
           "6.3":          "",
-          "labels": {
+          "_labels": {
             "1":  "Single Line Text",
             "2":  "Paragraph Text",
             "13": "File",
@@ -633,13 +633,13 @@ The response will contain a JSON object which contains the entry details. An exa
 
 #### Optional Arguments
 
-* **labels** *[int]*
+* **_labels** *[int]*
 
     Whether to include the labels.
 
     * **Usage**
 
-            https://localhost/wp-json/gf/v2/entries/5?labels=1
+            https://localhost/wp-json/gf/v2/entries/5?_labels=1
 
     * **Example Response**
 
@@ -679,6 +679,26 @@ The response will contain a JSON object which contains the entry details. An exa
           }
         }
         ```
+* **_fields** *[int]*
+
+    A comma separated list of fields to include in the response.
+
+    * **Usage**
+
+            https://localhost/wp-json/gf/v2/entries/5?_fields=1,6.1,6.2,6.3,date_created
+
+    * **Example Response**
+
+        ```json
+        {
+          "date_created": "2016-11-28 18:12:17",
+          "1":            "Text",
+          "6.1":          "first",
+          "6.2":          "second",
+          "6.3":          "third"
+        }
+        ```
+
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -867,7 +887,7 @@ Sends the notifications for the given entry.
 
 #### Optional Arguments
 
-* **include** *[array]*
+* **_notifications** *[array]*
 
     Limit the notifications to specific IDs.
 
@@ -875,9 +895,9 @@ Sends the notifications for the given entry.
 
         Sets the entry submitter as the user with user ID *1*.  
 
-            include[]=574ff8257d864&include[]=596e543d90b46
+            https://localhost/wp-json/gf/v2/entries/1/notifications?_notifications=574ff8257d864,596e543d90b46
 
-* **event** *[string]*  
+* **_event** *[string]*  
 
     The event to trigger. Default: form_submission.
 
@@ -885,7 +905,7 @@ Sends the notifications for the given entry.
 
         Sets the date created as *2016-11-28 18:12:17*.  
 
-            event=form_submission
+            https://localhost/wp-json/gf/v2/entries/1/notifications?_event=form_submission
 
 
 
@@ -918,31 +938,6 @@ the entry permanently but the response code will be 410 (Gone). Use the 'force' 
     }
   }
   ```
-
-------------------------------------------------------------------------------------------------------------------------
-
-### GET /entries/[ENTRY_ID]/fields/[FIELD_ID]
-
-Gets a specific field or group of fields from an entry. Multiple field IDs can be specified in a semicolon separated list.
-
-#### Path
-
-    https://localhost/wp-json/gf/v2/entries/1/fields/1
-    https://localhost/wp-json/gf/v2/entries/1/fields/1;3;5;date_created;13.6
-
-#### Response *[json]*
-
-**Example Response**
-
-Request to *https://localhost/wp-json/gf/v2/entries/70/fields/22.2*
-
-```json
-{
-  "70": {
-    "22.2": "$200.00"
-    }
-}
-```
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -1412,13 +1407,13 @@ The response will contain a JSON object which contains the entry details. An exa
 
 #### Optional Arguments
 
-* **labels** *[int]*  
+* **_labels** *[int]*  
 
     Whether to include the labels.
 
     * **Usage**  
 
-            https://localhost/wp-json/gf/v2/forms/1/entries?labels=1
+            https://localhost/wp-json/gf/v2/forms/1/entries?_labels=1
 
     * **Example Response**  
 
@@ -1456,6 +1451,25 @@ The response will contain a JSON object which contains the entry details. An exa
               "6.3": "Checkboxes Third Choice"
             }
           }
+        }
+        ```
+* **_fields** *[int]*
+
+    A comma separated list of fields to include in the response.
+
+    * **Usage**
+
+            https://localhost/wp-json/gf/v2/entries/5?_fields=1,6.1,6.2,6.3,date_created
+
+    * **Example Response**
+
+        ```json
+        {
+          "date_created": "2016-11-28 18:12:17",
+          "1":            "Text",
+          "6.1":          "first",
+          "6.2":          "second",
+          "6.3":          "third"
         }
         ```
 
@@ -1808,7 +1822,7 @@ Gets form details, including entry details.
   },
   "status":    "complete",
   "timestamp": 1480536695,
-  "labels": {
+  "_labels": {
     "1":  "Single Line Text",
     "2":  "Paragraph Text",
     "13": "File",

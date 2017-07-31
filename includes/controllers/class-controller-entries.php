@@ -67,15 +67,6 @@ class GF_REST_Entries_Controller extends GF_REST_Form_Entries_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $base . '/(?P<entry_id>[0-9;]+)/fields/(?P<field_ids>[\S]+)', array(
-			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_items' ),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				'args'                => array(),
-			),
-		) );
-
 	}
 
 	/**
@@ -106,9 +97,13 @@ class GF_REST_Entries_Controller extends GF_REST_Form_Entries_Controller {
 
 		$entry_id = $request->get_param( 'entry_id' );
 
-		$field_ids = $this->maybe_explode_url_param( $request, 'field_ids' );
+		$field_ids = $request['_fields'];
+		if ( ! empty( $field_ids ) ) {
+			$field_ids = (array) explode( ',', $request['_fields'] );
+			$field_ids = array_map( 'trim', $field_ids );
+		}
 
-		$labels = $request['labels'];
+		$labels = $request['_labels'];
 
 		$entry = GFAPI::get_entry( $entry_id );
 		if ( ! is_wp_error( $entry ) ) {
@@ -120,7 +115,7 @@ class GF_REST_Entries_Controller extends GF_REST_Form_Entries_Controller {
 
 		if ( $labels ) {
 			$form = GFAPI::get_form( $entry['form_id'] );
-			$entry['labels'] = $this->get_entry_labels( $form );
+			$entry['_labels'] = $this->get_entry_labels( $form );
 		}
 
 		$data = $this->prepare_item_for_response( $entry, $request );

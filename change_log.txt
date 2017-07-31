@@ -2,8 +2,11 @@
 Version 2.0-rc-1
     - Added the Location header when the confirmation is a redirect.
     - Added sanitization to the /forms endpoint.
-    - Added the entries/<entry-id>/notifications endpoint which (re)sends notifications.
+    - Added the POST /entries/<entry-id>/notifications endpoint which (re)sends notifications.
+    - Added the _fields query param to the GET /entries, GET /entries/<entry-id> and GET /forms/<fom-id>/entries endpoints. See https://core.trac.wordpress.org/ticket/38131
     - Fixed the status code for invalid submissions.
+    - Changed the 'labels' query param to '_labels' to match WP API properties.
+    - Removed the GET /entries/<entry-id>/fields/<field-ids> and GET /forms/<fom-id>/entries/<entry-id>/fields/<field-ids> endpoints
 
 ---------------------------------------------------------------------
 Version 2.0-beta-2

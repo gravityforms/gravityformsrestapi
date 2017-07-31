@@ -36,14 +36,6 @@ class GF_REST_Form_Entries_Controller extends GF_REST_Controller {
 				'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
 			),
 		) );
-		register_rest_route( $namespace, '/' . $base . '/fields/(?P<field_ids>[\S]+)', array(
-			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_items' ),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				'args'                => array(),
-			),
-		) );
 	}
 
 	/**
@@ -60,9 +52,13 @@ class GF_REST_Form_Entries_Controller extends GF_REST_Controller {
 
 		$entry_id = $this->maybe_explode_url_param( $request, 'entry_id' );
 
-		$field_ids = $this->maybe_explode_url_param( $request, 'field_ids' );
+		$field_ids = $request['_fields'];
+		if ( ! empty( $field_ids ) ) {
+			$field_ids = (array) explode( ',', $request['_fields'] );
+			$field_ids = array_map( 'trim', $field_ids );
+		}
 
-		$labels = $request['labels'];
+		$labels = $request['_labels'];
 
 		$data = array();
 		if ( $entry_id ) {
@@ -77,7 +73,7 @@ class GF_REST_Form_Entries_Controller extends GF_REST_Controller {
 
 					if ( $labels ) {
 						$form = GFAPI::get_form( $entry['form_id'] );
-						$entry['labels'] = $this->get_entry_labels( $form );
+						$entry['_labels'] = $this->get_entry_labels( $form );
 					}
 
 					$data[ $id ] = $entry;
@@ -105,14 +101,14 @@ class GF_REST_Form_Entries_Controller extends GF_REST_Controller {
 					}
 					if ( $labels && empty( $form_ids ) ) {
 						$form = GFAPI::get_form( $entry['form_id'] );
-						$entry['labels'] = $this->get_entry_labels( $form );
+						$entry['_labels'] = $this->get_entry_labels( $form );
 					}
 				}
 				$data = array( 'total_count' => $entry_count, 'entries' => $entries );
 
 				if ( $labels && ! empty( $form_ids ) && count( $form_ids ) == 1 ) {
 					$form = GFAPI::get_form( $form_ids[0] );
-					$data['labels'] = $this->get_entry_labels( $form );
+					$data['_labels'] = $this->get_entry_labels( $form );
 				}
 			}
 		}
@@ -247,8 +243,12 @@ class GF_REST_Form_Entries_Controller extends GF_REST_Controller {
 				'description'        => 'The search criteria.',
 				'type'               => 'string',
 			),
-			'labels' => array(
-				'description'        => 'Whether to include the labels.',
+			'_fields' => array(
+				'description'        => 'Comma separated list of fields to include in the response.',
+				'type'               => 'string',
+			),
+			'_labels' => array(
+				'description'        => 'Whether to include the labels in the response.',
 				'type'               => 'integer',
 			),
 		);

@@ -116,10 +116,16 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 		$third_entry_id = $entries[2]['id'];
 		$tenth_entry_id = $entries[9]['id'];
 
-		$url_param = sprintf( '%d;%d;%d', $first_entry_id, $third_entry_id, $tenth_entry_id );
-
-		$request = new WP_REST_Request( 'GET', $this->namespace . '/entries/' . $url_param );
-
+		$request = new WP_REST_Request( 'GET', $this->namespace . '/entries' );
+		$request->set_query_params(
+			array(
+				'include' => array(
+					$first_entry_id,
+					$third_entry_id,
+					$tenth_entry_id,
+				),
+			)
+		);
 		$response = $this->server->dispatch( $request );
 		$test_entries = $response->get_data();
 

@@ -50,7 +50,14 @@ class GF_REST_Form_Entries_Controller extends GF_REST_Controller {
 	 */
 	public function get_items( $request ) {
 
-		$entry_id = $this->maybe_explode_url_param( $request, 'entry_id' );
+		$entry_ids = $request['include'];
+
+		if ( ! empty( $entry_ids ) ) {
+			if ( ! is_array( $entry_ids ) ) {
+				$entry_ids = array( $entry_ids );
+			}
+			$entry_ids = array_map( 'absint', $entry_ids );
+		}
 
 		$field_ids = $request['_fields'];
 		if ( ! empty( $field_ids ) ) {
@@ -61,11 +68,11 @@ class GF_REST_Form_Entries_Controller extends GF_REST_Controller {
 		$labels = $request['_labels'];
 
 		$data = array();
-		if ( $entry_id ) {
-			foreach ( $entry_id as $id ) {
+		if ( $entry_ids ) {
+			foreach ( $entry_ids as $id ) {
 				$result = GFAPI::get_entry( $id );
 				if ( ! is_wp_error( $result ) ) {
-					$entry                = $this->maybe_json_encode_list_fields( $result );
+					$entry = $this->maybe_json_encode_list_fields( $result );
 
 					if ( ! empty( $field_ids ) && ( ! empty( $entry ) ) ) {
 						$entry = $this->filter_entry_fields( $entry, $field_ids );

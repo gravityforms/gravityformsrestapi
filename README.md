@@ -22,9 +22,9 @@ Issues that are not code-related will be immediately closed, and you will be dir
 
 ## Upgrading to Version 2
 
-The API is intended to feel as familiar as possible to developers who have worked with the WordPres REST API while
-maintaining as much functionality as possible as version 1. The endpoints are largely the same as version 1, however,
-the responses are slightly different and authentication is no longer handled by Gravity Forms.
+The API is intended to feel as familiar as possible to developers who have worked with the WordPres REST API.
+The endpoints are largely the same as version 1, however, the responses are slightly different and authentication 
+is no longer handled by Gravity Forms.
 
 The following breaking changes are required by clients to consume version 2:
 
@@ -279,7 +279,7 @@ The response will contain a JSON object which contains the entry details. An exa
     * **Example Response**
 
         ```json
-        {
+        [{
           "id":           "71",
           "form_id":      "1",
           "date_created": "2016-11-28 18:12:17",
@@ -312,86 +312,126 @@ The response will contain a JSON object which contains the entry details. An exa
               "6.3": "Checkboxes Third Choice"
             }
           }
+        }]
+        ```
+* **include** *[int]*
+
+    A comma separated list of entries to include in the response.
+
+    * **Usage**
+
+            https://localhost/wp-json/gf/v2/entries?include[]=1&include[]=3
+
+    * **Example Response**
+
+        ```json
+        [{
+          "date_created": "2016-11-28 18:12:17",
+          "1":            "Text",
+          "6.1":          "first",
+          "6.2":          "second",
+          "6.3":          "third"
+        }]
+        ```
+        
+* **_fields** *[int]*
+
+    A comma separated list of fields to include in the response.
+
+    * **Usage**
+
+            https://localhost/wp-json/gf/v2/entries/5?_fields=1,6.1,6.2,6.3,date_created
+
+    * **Example Response**
+
+        ```json
+        [{
+          "date_created": "2016-11-28 18:12:17",
+          "1":            "Text",
+          "6.1":          "first",
+          "6.2":          "second",
+          "6.3":          "third"
+        }]
+        ```
+        
+* **search** *[json]*
+
+    The search criteria.  
+
+    * **Properties**
+
+        * **field_filters** *[array]*  
+
+            An array of filters to search by.
+
+        * **key** *[int|float]*
+
+            The field ID.
+
+        * **value**  *[string]*
+
+            The value to search for.
+
+        * **operator** *[string]*  
+
+            The comparison operator to use.
+
+    * **Usage**
+
+        ```json
+        {
+          "field_filters": [{
+            "key":      1,
+            "value":    "Field Value",
+            "operator": "contains"
+          }]
         }
         ```
 
-    * **search** *[json]*
+* **paging** *[array]*
 
-        The search criteria.  
+    The paging criteria.
 
-        * **Properties**
+    * **Properties**
 
-            * **field_filters** *[array]*  
+        * **page_size** *[int]*
 
-                An array of filters to search by.
+            The number of results per page.
 
-            * **key** *[int|float]*
+        * **current_page** *[int]*
 
-                The field ID.
+            The current page to pull details from.
 
-            * **value**  *[string]*
+        * **offset** *[int]*
 
-                The value to search for.
+            The offset to begin with.
 
-            * **operator** *[string]*  
+    * **Usage**
 
-                The comparison operator to use.
+            https://localhost/wp-json/gf/v2/entries?paging[page_size]=20&paging[current_page]=2&paging[offset]=30
 
-        * **Usage**
+* **sorting** *[array]*
 
-            ```json
-            {
-              "field_filters": [{
-                "key":      1,
-                "value":    "Field Value",
-                "operator": "contains"
-              }]
-            }
-            ```
+    The sorting criteria.
 
-    * **paging** *[array]*
+    * **Properties**
 
-        The paging criteria.
+        * **key** *[string|int]*
 
-        * **Properties**
+            The key to sort by.
 
-            * **page_size** *[int]*
+        * **direction** *[string]*
 
-                The number of results per page.
+            The direction. Either *ASC* or *DESC*.
 
-            * **current_page** *[int]*
+        * **is_numeric** *[bool]*
 
-                The current page to pull details from.
+            If the key is numeric.
 
-            * **offset** *[int]*
+    * **Usage**
 
-                The offset to begin with.
+            https://localhost/wp-json/gf/v2/entries?sorting[key]=id&sorting[direction]=ASC&sorting[is_numeric]=true
 
-        * **Usage**
-
-                https://localhost/wp-json/gf/v2/entries?paging[page_size]=20&paging[current_page]=2&paging[offset]=30
-
-    * **sorting** *[array]*
-
-        The sorting criteria.
-
-        * **Properties**
-
-            * **key** *[string|int]*
-
-                The key to sort by.
-
-            * **direction** *[string]*
-
-                The direction. Either *ASC* or *DESC*.
-
-            * **is_numeric** *[bool]*
-
-                If the key is numeric.
-
-        * **Usage**
-
-                https://localhost/wp-json/gf/v2/entries?sorting[key]=id&sorting[direction]=ASC&sorting[is_numeric]=true
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -593,13 +633,7 @@ Gets an entry based on the entry ID.
 
 #### Path
 
-* **Single entry**  
-
         https://localhost/wp-json/gf/v2/entries/1
-
-* **Multiple entries (semicolon separated)**  
-
-        https://localhost/wp-json/gf/v2/entries/1;2;3;4
 
 #### Response *[json]*
 
@@ -1718,52 +1752,6 @@ When creating an entry, the response body will contain the new entry.
         Sets the *Subscription* transaction type.  
 
             transaction_type=Subscription
-
-------------------------------------------------------------------------------------------------------------------------
-
-### GET /forms/[FORM_ID]/entries/fields/[FIELD_ID]
-
-Gets a specific field or group of fields from a group of entries. Multiple field IDs can be specified in a semicolon separated list.
-
-#### Path
-
-    https://localhost/wp-json/gf/v2/forms/1/entries/fields/1
-    https://localhost/wp-json/gf/v2/forms/1/entries/fields/date_created;1;13.6
-
-
-#### Response *[json]*
-
-**Example Response**  
-
-Request to *https://localhost/wp-json/gf/v2/forms/1/entries/fields/date_created;1;13.6*
-
-```json
-{
-  "total_count": "3",
-  "entries": [
-    {
-      "date_created": "2013-11-29 13:00:00",
-      "1": "Second Choice",
-      "13.6": "Canada"
-    },
-    {
-      "date_created": "2013-11-29 13:20:00",
-      "1": "First Choice",
-      "13.6": "Spain"
-    },
-    {
-      "date_created": "2013-11-29 13:30:00",
-      "1": "Third Choice",
-      "13.6": "United States"
-    },
-    {
-      "date_created": "2013-11-29 13:40:00",
-      "1": "Second Choice",
-      "13.6": "France"
-    }
-  ]
-}
-```
 
 ------------------------------------------------------------------------------------------------------------------------
 

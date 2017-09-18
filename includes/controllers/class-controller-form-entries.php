@@ -219,9 +219,16 @@ class GF_REST_Form_Entries_Controller extends GF_REST_Controller {
 			return new WP_Error( 'missing_entry', __( 'Missing entry JSON', 'gravityforms' ) );
 		}
 
-		$form_id = $this->maybe_explode_url_param( $request, 'form_id' );
+		$url_params = $request->get_url_params();
 
-		if ( $form_id && ! is_array( $form_id ) ) {
+		// Check the URL params first
+		$form_id = rgar( $url_params, 'form_id' );
+
+		if ( empty( $form_id ) ) {
+			$form_id = $request->get_param( 'form_id' );
+		}
+
+		if ( $form_id ) {
 			$entry['form_id'] = absint( $form_id );
 		}
 

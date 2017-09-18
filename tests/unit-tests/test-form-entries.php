@@ -86,7 +86,7 @@ class Tests_GF_REST_API_Form_Entries extends GF_UnitTestCase {
 	function test_create_entry() {
 		$form_id = $this->get_form_id();
 		$entry = array(
-			'form_id'      => $form_id,
+			'form_id'      => '123', // The Form ID will get overridden by the form ID in the URL.
 			'date_created' => '2016-07-19 11:00:00',
 			'1'            => 'Second Choice',
 			'2.2'          => 'Second Choice',
@@ -102,6 +102,7 @@ class Tests_GF_REST_API_Form_Entries extends GF_UnitTestCase {
 
 		$verify_entry = GFAPI::get_entry( $entry['id'] );
 
+		$this->assertEquals( $form_id, $verify_entry['form_id'] );
 		$this->assertEquals( '2016-07-19 11:00:00', $verify_entry['date_created'] );
 		$this->assertEquals( 'Second Choice', $verify_entry['2.2'] );
 	}

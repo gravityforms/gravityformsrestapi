@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------
+Version 2.0-rc-2
+    - Updated the POST /forms/<form-id>/entries endpoint to override the form_id entry property with the Form ID in the URL.
+
+---------------------------------------------------------------------
 Version 2.0-rc-1
     - Added the Location header when the confirmation is a redirect.
     - Added sanitization to the /forms endpoint.
@@ -7,7 +11,7 @@ Version 2.0-rc-1
     - Added the include query param to the GET /entries.
     - Fixed the status code for invalid submissions.
     - Changed the 'labels' query param to '_labels' to match WP API properties.
-    - Removed the GET /entries/<entry-id>/fields/<field-ids> and GET /forms/<fom-id>/entries/<entry-id>/fields/<field-ids> endpoints
+    - Removed the GET /entries/<entry-id>/fields/<field-ids> and GET /entries/<entry-id>/fields/<field-ids> endpoints
     - Removed support for semicolon separated entry IDs in the GET /entries endpoint. Use the include query param instead.
 
 ---------------------------------------------------------------------

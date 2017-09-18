@@ -316,7 +316,7 @@ The response will contain a JSON object which contains the entry details. An exa
         ```
 * **include** *[int]*
 
-    A comma separated list of entries to include in the response.
+    An array of entries to include in the response.
 
     * **Usage**
 

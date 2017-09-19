@@ -189,6 +189,25 @@ class Tests_GF_REST_API_Entries extends GF_UnitTestCase {
 		$this->assertEquals( 10, count( $data['entries'] ) );
 	}
 
+	function test_get_entries_default_status_active() {
+
+		$this->_create_entries();
+
+		$entries = GFAPI::get_entries( $this->form_id );
+
+		$entry_id_1 = $entries[0]['id'];
+
+		$entry_id_2 = $entries[1]['id'];
+
+		$result = GFAPI::update_entry_property( $entry_id_1, 'status', 'trash' );
+
+		$request = new WP_REST_Request( 'GET', $this->namespace . '/forms/' . $this->get_form_id() . '/entries' );
+		$response = $this->server->dispatch( $request );
+		$data = $response->get_data();
+
+		$this->assertEquals( $entry_id_2, $data['entries'][0]['id'] );
+	}
+
 	function test_create_entry() {
 		$form_id = $this->get_form_id();
 		$entry   = array(

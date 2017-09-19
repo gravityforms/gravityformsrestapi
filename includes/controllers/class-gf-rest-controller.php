@@ -75,6 +75,10 @@ abstract class GF_REST_Controller extends WP_REST_Controller {
 			$search = array();
 		}
 
+		if ( ! isset( $search['status'] ) ) {
+			$search['status'] = 'active';
+		}
+
 		$params = array(
 			'search_criteria' => $search,
 			'paging'          => $paging,

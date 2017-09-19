@@ -1,6 +1,7 @@
 ---------------------------------------------------------------------
 Version 2.0-rc-2
     - Updated the POST /forms/<form-id>/entries endpoint to override the form_id entry property with the Form ID in the URL.
+    - Updated the GET /forms/<form-id>/entries endpoint to return only active entries by default.
 
 ---------------------------------------------------------------------
 Version 2.0-rc-1

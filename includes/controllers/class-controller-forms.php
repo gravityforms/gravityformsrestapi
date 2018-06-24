@@ -378,7 +378,7 @@ class GF_REST_Forms_Controller extends GF_REST_Controller {
 				return new WP_Error( 'missing_form', __( 'The Form object must be sent as a JSON string in the request body with the content-type header set to application/json.', 'gravityforms' ) );
 			}
 		}
-		$form = json_decode( $form_json, true );
+		$form = (is_string($form_json)) ? json_decode( $form_json, true ) : $form_json;
 
 		$form = GFFormsModel::convert_field_objects( $form );
 

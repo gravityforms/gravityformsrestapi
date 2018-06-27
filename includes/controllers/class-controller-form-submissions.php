@@ -62,6 +62,10 @@ class GF_REST_Form_Submissions_Controller extends GF_REST_Controller {
 
 		$result = GFAPI::submit_form( $form_id, $input_values, $field_values, $target_page, $source_page );
 
+		if ( is_wp_error( $result ) ) {
+			return new WP_Error( $result->get_error_code(), $result->get_error_message(), array( 'status' => 400 ) );
+		}
+
 		$response = $this->prepare_item_for_response( $result, $request );
 
 		if ( isset( $result['confirmation_type'] ) && $result['confirmation_type'] == 'redirect' ) {

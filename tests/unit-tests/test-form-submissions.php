@@ -92,6 +92,31 @@ class Tests_GF_REST_API_Form_Submissions extends GF_UnitTestCase {
 		$this->assertEquals( 1, $count );
 	}
 
+	function test_invalid_form() {
+
+		$request = new WP_REST_Request( 'POST', $this->namespace . '/forms/999/submissions' );
+
+		$body = array(
+			'input_1' => 'First Choice',
+			'input_2_2' => 'Second Choice',
+			'input_5' => 'Testing the submissions endpoint',
+			'input_8' => '9',
+			'input_11' => '11:10',
+			'field_values' => '',
+			'target_page'  => 0,
+			'source_page'  => 1,
+		);
+
+		// Both $request and $_POST need the input values to simulate the request.
+		$request->set_body_params( $body );
+		$_POST = $body;
+
+		$response = $this->server->dispatch( $request );
+		$status = $response->get_status();
+		$this->assertEquals( 400, $status );
+
+	}
+
 	function test_redirect_confirmation() {
 
 		if ( version_compare( GFForms::$version, '2.3-dev-1', '<' ) ) {

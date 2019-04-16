@@ -1,7 +1,10 @@
-Gravity Forms REST API Feature Add-On
+Gravity Forms REST API Feature Add-On - ARCHIVED
 =====================================
 
 [![Build Status](https://travis-ci.com/gravityforms/gravityformsrestapi.svg?token=dWdigWFPjUjwVzDjbyxv&branch=master)](https://travis-ci.com/gravityforms/gravityformsrestapi)
+
+Note: The REST API v2 is now integrated into Gravity Forms core. The information below is no longer accurate and the repository is now archived.
+
 
 # Introduction
 
